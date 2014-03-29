@@ -15,9 +15,11 @@ from subprocess import call
 
 import glob
 
+**************************************
 oauthFile = "/home/owner/.googleoauth"
-uploadDir = "/mnt/hd0/Music/Android Music/uploads/"
-storageDir = "/mnt/hd0/Music/Android Music/"
+uploadDir = "/mnt/hd0/Music/uploads/"
+storageDir = "/mnt/hd0/Music/"
+**************************************
 
 def ask_for_credentials():
 	"""Make an instance of the api and attempts to login with it.
