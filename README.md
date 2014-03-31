@@ -15,6 +15,12 @@ Instructions
 4) "chmod 755 googleupload.py" to make sure it is executable  
 5) Profit! (run it as a background process "./googleupload.py &" and it will watch your folder and upload accordingly)  
 
+Folders
+==========================
+-oauthFile is the oauth file created when running the firstRun.py script  
+-uploadDir is the folder that is watched to upload to the google account  
+-storageDir is the folder that the uploaded file is moved to upon successful upload  
+
 Notes
 ==========================
 You can add "/PATH/TO/googleupload.py &" in rc.local to run as a background process to automatically on startup
