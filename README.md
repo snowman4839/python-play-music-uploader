@@ -1,4 +1,4 @@
-python-play-music-uploader
+Google Play Music Uploader
 ==========================
 This is a play music uploader based on the gmusicapi by Simon Weber (https://github.com/simon-weber/Unofficial-Google-Music-API)
 and Watchdog python library (https://pypi.python.org/pypi/watchdog)
