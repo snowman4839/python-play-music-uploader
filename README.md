@@ -17,7 +17,7 @@ Instructions
 
 Folders
 ==========================
-googleupload.py folder path variables
+googleupload.py folder path variables  
 oauthFile is the oauth file created when running the firstRun.py script  
 uploadDir is the folder that is watched to upload to the google account  
 storageDir is the folder that the uploaded file is moved to upon successful upload  
