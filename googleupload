@@ -18,12 +18,13 @@ from os import walk
 
 import glob
 
+#CHANGE THESE
 ######################################
-oauthFile = "/root/.oauthfile"
-uploadDir = "/mnt/hd0/Music/Android Music/uploads/"
-storageDir = "/mnt/hd0/Music/Android Music/"
+oauthFile = "/owner/.oauthfile"
+uploadDir = "/mnt/hd0/Music/uploads/"
+storageDir = "/mnt/hd0/Music/"
 #####################################
-
+#ADD THESE
 ####################################
 googleEmail = ""
 googlePass = ""
