@@ -1,0 +1,169 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from getpass import getpass
+
+from gmusicapi import Musicmanager
+from gmusicapi import Webclient
+
+import os
+import time
+
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
+
+from subprocess import call
+
+from os import walk
+
+import glob
+
+######################################
+oauthFile = "/root/.oauthfile"
+uploadDir = "/mnt/hd0/Music/Android Music/uploads/"
+storageDir = "/mnt/hd0/Music/Android Music/"
+#####################################
+
+####################################
+googleEmail = ""
+googlePass = ""
+####################################
+
+def ask_for_credentials():
+	"""Make an instance of the api and attempts to login with it.
+	Return the authenticated api.
+	"""
+
+	api = Musicmanager()
+
+	logged_in = False
+	attempts = 0
+
+	api.login(oauthFile)
+
+	return api
+
+
+def upload(api, uploader):
+	time.sleep(2)
+
+	#Find first occurance of mp3 or m4a file in the uploadDir
+        for root, dirs, files in os.walk(uploadDir):
+		for file in files:
+			#If found set it to mp3file and break to start upload
+               		if file.endswith('.mp3') or file.endswith('.m4a'):
+                        	mp3file = root + file
+                                break
+                break
+        print mp3file
+
+	#Returns the result of the upload in a tuple
+	uploadDict = api.upload(mp3file, 1, True)
+
+	#If upload is successful
+	if uploadDict[0]:
+		#Get song id
+		songid = (uploadDict[0])[mp3file]
+		#Extract artwork via eyeD3
+		call(["mkdir","/tmp/cover"])
+		call(["eyeD3","--write-images=/tmp/cover",mp3file])
+		call(["sleep","1"])
+		#Get the new artwork path
+		coverFile = glob.glob("/tmp/cover/*")
+		#If artwork was extracted
+		if (coverFile):
+			#Print the path to the artwork
+			print coverFile
+			#Move it to a absolute location and upload it to the newly uploaded song
+			call(["mv",coverFile[0],"/tmp/cover/img.jpg"])
+			uploader.upload_album_art(songid,"/tmp/cover/img.jpg")
+			#call(["rm","/tmp/cover/*"])
+		#Move uploaded file to the storage directory
+		call(["mv",mp3file,storageDir])
+		#Clean up tmp folder and files
+		call(["rm","-R","/tmp/cover"])
+		print "Uploaded"
+	#Move uploaded file to the storage directory if it was matched to a song on the google servers
+	elif uploadDict[1]:
+		call(["mv",mp3file,storageDir])
+		print "Matched song on Google servers"
+	#Move uploaded file to the storage directory if it was already uploaded to the account
+	elif uploadDict[2]:
+		call(["mv",mp3file,storageDir])
+		print "Already uploaded"
+
+	#If there are still files to be uploaded, recursively call upload	
+	if detectFile():
+		upload(api, uploader)
+
+#Searches through the uploadDir for mp3 or m4a files. Returns 1 if found, 0 if not
+def detectFile():
+	for root, dirs, files in os.walk(uploadDir):
+		for file in files:
+			if file.endswith('.mp3') or file.endswith('.m4a'):
+				return 1
+	return 0
+
+
+#Class to handle events when anything happens in the watched folder
+class Handler(PatternMatchingEventHandler):
+	def on_any_event(self, event):
+		#If a file is mp3 or m4a file is detected in the uploadDir, log in and enter
+		#the recursive upload function
+		if detectFile():
+			#Create auth objects
+			api = ask_for_credentials()
+			uploader = Webclient()
+			uploader.login(googleEmail, googlePass)
+			if not api.is_authenticated():
+				print "Sorry, those credentials weren't accepted."
+				exit()
+			print 'Sucessfully logged in.'
+
+			#Run upload function and pass authenticated objects
+			upload(api, uploader)
+
+			#Logout of both interfaces
+			api.logout()
+			uploader.logout()
+                        print "logged out"
+
+
+if __name__ == '__main__':
+	#Initial upload on start
+	if detectFile():
+		#Create auth objects
+		api = ask_for_credentials()
+		uploader = Webclient()
+		uploader.login(googleEmail, googlePass)
+		if not api.is_authenticated():
+			print "Sorry, those credentials weren't accepted."
+			exit()
+		print 'Sucessfully logged in.'
+
+		#Run upload function and pass authenticated objects
+		upload(api, uploader)
+
+		#Logout of both interfaces
+		api.logout()
+		uploader.logout()
+		print "logged out"
+
+	#Watch folder for newly added .mp3 files, ignore .tacitpart files while file is being uploaded
+	eventWatcher = Handler("*.mp3",["*.mp3.tacitpart"],False,False)
+	observer = Observer()
+	observer.schedule(eventWatcher,uploadDir,recursive=False)
+	#Begin watch
+	print "starting"
+	observer.start()
+
+	#Watch the folder continuously 
+	try:
+		while True:
+			time.sleep(1)
+	#Unless there's a keyboard interrupt
+	except KeyboardInterrupt:
+		print "stopping"
+		observer.stop()
+		print "joining"
+		observer.join()
