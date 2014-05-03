@@ -152,7 +152,7 @@ if __name__ == '__main__':
 	#Watch folder for newly added .mp3 files, ignore .tacitpart files while file is being uploaded
 	eventWatcher = Handler("*.mp3",["*.mp3.tacitpart"],False,False)
 	observer = Observer()
-	observer.schedule(eventWatcher,uploadDir,recursive=False)
+	observer.schedule(eventWatcher,uploadDir,recursive=True)
 	#Begin watch
 	print "starting"
 	observer.start()
