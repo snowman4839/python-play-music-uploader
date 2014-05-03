@@ -53,9 +53,8 @@ def upload(api, uploader):
 		for file in files:
 			#If found set it to mp3file and break to start upload
                		if file.endswith('.mp3') or file.endswith('.m4a'):
-                        	mp3file = root + file
+                        	mp3file = os.path.join(root,file)
                                 break
-                break
         print mp3file
 
 	#Returns the result of the upload in a tuple
