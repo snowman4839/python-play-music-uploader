@@ -5,7 +5,7 @@ and Watchdog python library (https://pypi.python.org/pypi/watchdog)
 
 Instructions
 ==========================
-1) Install gmusicapi, eyeD3, and watchdog python library plus all of required their required dependencies  
+1) Install gmusicapi, eyeD3, libav-tools, and watchdog python library plus all of required their required dependencies  
 2) Run firstRun.py. This will create the oauth file for the music manager by registering it as an
     uploader device with google. It will be stored in ~/.oauthfile  
    It is probably best to do this over SSH if this is a headless server as it will give you a long
