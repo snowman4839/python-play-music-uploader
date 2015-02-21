@@ -35,7 +35,7 @@ def ask_for_credentials():
 	Return the authenticated api.
 	"""
 
-	api = Musicmanager()
+	api = Musicmanager(False,True,True)
 
 	logged_in = False
 	attempts = 0
@@ -113,7 +113,7 @@ class Handler(PatternMatchingEventHandler):
 		if detectFile():
 			#Create auth objects
 			api = ask_for_credentials()
-			uploader = Webclient()
+			uploader = Webclient(False,True,True)
 			uploader.login(googleEmail, googlePass)
 			if not api.is_authenticated():
 				print "Sorry, those credentials weren't accepted."
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 	if detectFile():
 		#Create auth objects
 		api = ask_for_credentials()
-		uploader = Webclient()
+		uploader = Webclient(False,True,True)
 		uploader.login(googleEmail, googlePass)
 		if not api.is_authenticated():
 			print "Sorry, those credentials weren't accepted."
